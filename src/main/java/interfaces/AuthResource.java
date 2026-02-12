@@ -35,8 +35,8 @@ public class AuthResource {
         }
 
         if (ok) {
-            String issuer = "vuelo-auth";
-            long ttl = 3600;
+            String issuer = "inscripcion-auth";
+            long ttl = 8000;
 
             Instant now = Instant.now();
             Instant exp = now.plusSeconds(ttl);
