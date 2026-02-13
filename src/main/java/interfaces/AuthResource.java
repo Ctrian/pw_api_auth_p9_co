@@ -25,7 +25,8 @@ public class AuthResource {
     @jakarta.ws.rs.Produces(jakarta.ws.rs.core.MediaType.APPLICATION_JSON)
     public TokenResponse token(
             @QueryParam("user") String user,
-            @QueryParam("password") String password
+            @QueryParam("password") String password,
+            @QueryParam("rol") String rol
         ) {
 
         // Compara el usuario y password contra la base
