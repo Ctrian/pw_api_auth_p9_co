@@ -19,7 +19,11 @@ public class UsuarioService {
     }
 
     public UsuarioRepresentation findByUsuario(String user) {
-        return this.mapperToUR(this.usuarioRepository.find("usuario", user).firstResult());
+        domain.Usuario usuario = this.usuarioRepository.find("usuario", user).firstResult();
+        if (usuario == null) {
+            return null;
+        }
+        return this.mapperToUR(usuario);
     }
 
     private UsuarioRepresentation mapperToUR(Usuario usuario){

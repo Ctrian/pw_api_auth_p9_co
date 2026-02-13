@@ -2,6 +2,7 @@ package interfaces;
 
 import java.time.Instant;
 import java.util.Set;
+import org.jboss.logging.Logger;
 
 import application.UsuarioService;
 import application.representation.UsuarioRepresentation;
@@ -14,46 +15,43 @@ import jakarta.ws.rs.QueryParam;
 @Path("/auth")
 public class AuthResource {
 
+    private static final Logger LOG = Logger.getLogger(AuthResource.class);
+
     @Inject
     private UsuarioService usuarioService;
 
     @GET
     @Path("/token")
+    @jakarta.ws.rs.Produces(jakarta.ws.rs.core.MediaType.APPLICATION_JSON)
     public TokenResponse token(
             @QueryParam("user") String user,
-            @QueryParam("password") String password,
-            @QueryParam("tiempo_vigencia") Long tiempoVigencia) {
+            @QueryParam("password") String password
+        ) {
 
-        // Aqui es donde se compara el password y usuario contra la base
+        // Compara el usuario y password contra la base
+        LOG.infof("Intento de login: user=%s, password=%s", user, password);
         UsuarioRepresentation usuario = usuarioService.findByUsuario(user);
-        // TAREA
-        boolean ok = false;
-        String rol = null;
-        
-        if (usuario != null && usuario.getPassword().equals(password)) {
-            ok = true;
-            rol = usuario.getRol();
+        if (usuario != null) {
+            LOG.infof("Usuario encontrado: %s, password en BD: %s, rol: %s", usuario.getUsuario(), usuario.getPassword(), usuario.getRol());
+        } else {
+            LOG.warnf("Usuario no encontrado: %s", user);
         }
-
-        if (ok) {
-            String issuer = "inscripcion-auth";
-            
-            // 2. Usamos el valor recibido. Si viene nulo o es 0, usamos 8000 por defecto.
-            long ttl = (tiempoVigencia != null && tiempoVigencia > 0) ? tiempoVigencia : 8000;
-
+        if (usuario != null && usuario.getPassword().equals(password)) {
+            String issuer = "concesionario-auth";
+            long ttl = 8000;
             Instant now = Instant.now();
             Instant exp = now.plusSeconds(ttl);
-
             String jwt = Jwt.issuer(issuer)
                     .subject(user)
-                    .groups(Set.of(rol)) // roles: user / admin
+                    .groups(Set.of(usuario.getRol())) // roles: user / admin
                     .issuedAt(now)
                     .expiresAt(exp)
                     .sign();
-
-            return new TokenResponse(jwt, exp.getEpochSecond(), rol);
+            LOG.infof("Login exitoso para usuario: %s", user);
+            return new TokenResponse(jwt, exp.getEpochSecond(), usuario.getRol());
         } else {
-            return null;
+            LOG.warnf("Login fallido para usuario: %s", user);
+            throw new jakarta.ws.rs.WebApplicationException("Usuario o contraseña incorrectos", 401);
         }
     }
 
