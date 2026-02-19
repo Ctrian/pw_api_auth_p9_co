@@ -1,0 +1,14 @@
+### Guardar un vehiculo
+POST http://localhost:8081/concesionaria/api/v1.0/vehiculos/guardar
+Content-Type: application/json
+
+{
+  "marca": "Toyota",
+  "modelo": "Hilux",
+  "chasis": "93HB4J82KLS9023",
+  "fechaFabricacion": "2023-05-15T10:30:00",
+  "fechaMatricula": "2024-01-20T08:00:00"
+}
+
+### Obtener el Token
+GET http://localhost:8082/auth/token?user=andres&&password=123&&rol=admin
