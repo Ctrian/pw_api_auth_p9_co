@@ -21,25 +21,25 @@ public class AuthResource {
     @Path("/token")
     public TokenResponse token(
             @QueryParam("user") String user,
-            @QueryParam("password") String password,
-            @QueryParam("rol") String rol) {
+            @QueryParam("password") String password) {
 
         // Aqui es donde se compara el password y usuario contra la base
         UsuarioRepresentation usuario = usuarioService.findByUsuario(user);
         // TAREA
         boolean ok = false;
-        // String rol = null;
-        
+        String rol = null;
+
         if (usuario != null && usuario.getPassword().equals(password)) {
             ok = true;
             rol = usuario.getRol();
         }
 
         if (ok) {
-            String issuer = "concesionaria-auth";
-            
+            String issuer = "consultorio-auth";
+
             // 2. Usamos el valor recibido. Si viene nulo o es 0, usamos 8000 por defecto.
-            // long ttl = (tiempoVigencia != null && tiempoVigencia > 0) ? tiempoVigencia : 8000;
+            // long ttl = (tiempoVigencia != null && tiempoVigencia > 0) ? tiempoVigencia :
+            // 8000;
             long ttl = 8000;
 
             Instant now = Instant.now();

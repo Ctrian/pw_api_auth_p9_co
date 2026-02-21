@@ -13,4 +13,4 @@ Authorization: Bearer {{token}}
 }
 
 ### Obtener el Token
-GET http://localhost:8082/auth/token?user=andres&&password=123&&rol=admin
+GET http://localhost:8082/auth/token?user=andres&&password=123
